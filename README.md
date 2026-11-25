@@ -8,7 +8,7 @@ Submitted → Under Review → Assigned → In Progress → Resolved → Closed 
 
 Every status change is stored with the responsible user and a timestamp, and every permission is enforced on the server.
 
-- **Live demo:** _to be added after deployment_
+- **Live demo:** https://civicpulse-theta-sage.vercel.app
 - **Database design:** [docs/DATABASE.md](docs/DATABASE.md)
 - **API documentation:** [docs/API.md](docs/API.md)
 
