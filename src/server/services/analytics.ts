@@ -126,7 +126,8 @@ export async function departmentPerformance(f: AnalyticsFilter) {
     const resolutionRate = total ? resolved / total : 0;
     const onTimeRate = num(x.with_due) ? num(x.on_time) / num(x.with_due) : 0;
     const avgRating = x.avg_rating == null ? null : Number(x.avg_rating);
-    const score = Math.round(100 * (0.45 * resolutionRate + 0.3 * onTimeRate + 0.25 * ((avgRating ?? 3) / 5)));
+    // A department with no reports in the period has nothing to score yet.
+    const score = total ? Math.round(100 * (0.45 * resolutionRate + 0.3 * onTimeRate + 0.25 * ((avgRating ?? 3) / 5))) : null;
     return {
       id: x.id as string,
       name: x.name as string,
@@ -143,7 +144,9 @@ export async function departmentPerformance(f: AnalyticsFilter) {
       score,
     };
   });
-  return list.sort((a, b) => b.score - a.score).map((d, i) => ({ ...d, rank: i + 1 }));
+  list.sort((a, b) => (b.score ?? -1) - (a.score ?? -1) || a.name.localeCompare(b.name));
+  let rank = 0;
+  return list.map((d) => ({ ...d, rank: d.score == null ? null : ++rank }));
 }
 
 export async function areaDistribution(f: AnalyticsFilter, limit = 12) {

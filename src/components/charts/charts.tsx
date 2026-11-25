@@ -24,6 +24,15 @@ const BRAND = "#123B5D";
 const ACCENT = "#00A6A6";
 const tick = { fill: "currentColor", fontSize: 12 };
 
+function NoData({ height }: { height: number }) {
+  return (
+    <div className="grid place-items-center text-center text-sm text-muted" style={{ height }}>
+      <p>No reports in this period yet.</p>
+    </div>
+  );
+}
+const isEmpty = (rows: Record<string, unknown>[], keys: string[]) => rows.every((r) => keys.every((k) => !Number(r[k])));
+
 function TooltipBox({ active, payload, label, suffix = "" }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string; suffix?: string }) {
   if (!active || !payload?.length) return null;
   return (
@@ -40,6 +49,7 @@ function TooltipBox({ active, payload, label, suffix = "" }: { active?: boolean;
 }
 
 export function TrendChart({ data, height = 280 }: { data: { label: string; reported: number; resolved: number }[]; height?: number }) {
+  if (isEmpty(data, ["reported", "resolved"])) return <NoData height={height} />;
   return (
     <div className="text-muted" style={{ height }}>
       <ResponsiveContainer>
@@ -68,6 +78,7 @@ export function TrendChart({ data, height = 280 }: { data: { label: string; repo
 }
 
 export function CategoryDonut({ data, height = 260, stacked }: { data: { category: string; total: number }[]; height?: number; stacked?: boolean }) {
+  if (isEmpty(data, ["total"])) return <NoData height={height} />;
   const rows = data.map((d) => ({ name: CATEGORY_LABELS[d.category as IssueCategory] ?? d.category, value: d.total, color: CATEGORY_COLORS[d.category as IssueCategory] ?? "#888" }));
   const total = rows.reduce((s, r) => s + r.value, 0);
   return (
@@ -103,6 +114,7 @@ export function CategoryDonut({ data, height = 260, stacked }: { data: { categor
 }
 
 export function StackedDeptBar({ data, height = 300 }: { data: { name: string; open: number; resolved: number }[]; height?: number }) {
+  if (isEmpty(data, ["open", "resolved"])) return <NoData height={height} />;
   return (
     <div className="text-muted" style={{ height }}>
       <ResponsiveContainer>
@@ -121,6 +133,7 @@ export function StackedDeptBar({ data, height = 300 }: { data: { name: string; o
 }
 
 export function SimpleBar({ data, dataKey, nameKey, color = ACCENT, height = 260, suffix = "", name = "Value" }: { data: Record<string, unknown>[]; dataKey: string; nameKey: string; color?: string; height?: number; suffix?: string; name?: string }) {
+  if (isEmpty(data, [dataKey])) return <NoData height={height} />;
   return (
     <div className="text-muted" style={{ height }}>
       <ResponsiveContainer>
@@ -146,6 +159,7 @@ const STATUS_COLORS: Record<string, string> = {
   REJECTED: "#E03131",
 };
 export function StatusBars({ data, height = 260 }: { data: { status: string; total: number }[]; height?: number }) {
+  if (isEmpty(data, ["total"])) return <NoData height={height} />;
   const order = ["SUBMITTED", "UNDER_REVIEW", "ASSIGNED", "IN_PROGRESS", "RESOLVED", "CLOSED", "REJECTED"];
   const rows = order.map((s) => ({ name: STATUS_LABELS[s as keyof typeof STATUS_LABELS], total: data.find((d) => d.status === s)?.total ?? 0, color: STATUS_COLORS[s] }));
   return (

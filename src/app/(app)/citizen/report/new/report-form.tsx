@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Crosshair, Loader2, MapPin, Send } from "lucide-react";
 import type { IssueCategory, IssueStatus } from "@/db/schema";
 import { CATEGORIES, CATEGORY_COLORS, CATEGORY_LABELS } from "@/lib/constants";
@@ -53,9 +53,19 @@ export function ReportForm({ areas, center, bounds, city }: { areas: Area[]; cen
   }, [dupKey]);
 
   const visibleDupes = hasPoint && category ? dupes : [];
+  const addressTouched = useRef(false);
   const setPoint = (la: number, ln: number) => {
     setLat(la.toFixed(6));
     setLng(ln.toFixed(6));
+    // Fill the address from OpenStreetMap unless the citizen already typed one.
+    if (!addressTouched.current) {
+      fetch(`/api/geocode/reverse?lat=${la}&lng=${ln}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d: { address?: string } | null) => {
+          if (d?.address && !addressTouched.current) setAddress(d.address);
+        })
+        .catch(() => {});
+    }
     // Snap to the closest known area for convenience.
     let best: Area | null = null;
     let bestD = Infinity;
@@ -165,8 +175,8 @@ export function ReportForm({ areas, center, bounds, city }: { areas: Area[]; cen
             </div>
             {outside && <p className="text-xs font-medium text-rose-600">This point is outside the {city} service area.</p>}
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Address / landmark" htmlFor="address" error={errors.address} required>
-                <input id="address" className={inputClass} placeholder="House 12, Road 5, near the mosque" value={address} onChange={(e) => setAddress(e.target.value)} aria-invalid={!!errors.address} />
+              <Field label="Address / landmark" htmlFor="address" error={errors.address} hint="Filled from the map pin; add a landmark if it helps." required>
+                <input id="address" className={inputClass} placeholder="House 12, Road 5, near the mosque" value={address} onChange={(e) => { addressTouched.current = e.target.value !== ""; setAddress(e.target.value); }} aria-invalid={!!errors.address} />
               </Field>
               <Field label="Area" htmlFor="area" hint="Filled automatically from the pin">
                 <select id="area" className={inputClass} value={areaId} onChange={(e) => setAreaId(e.target.value)}>

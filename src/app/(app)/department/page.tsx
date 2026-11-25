@@ -50,7 +50,7 @@ export default async function DepartmentDashboard({ searchParams }: { searchPara
         <StatCard label="Active tasks" value={kpis.activeTasks} icon={<ClipboardCheck className="size-5" />} tone="indigo" href="/department/team" hint={`${kpis.tasksAwaitingReview} awaiting review`} />
         <StatCard label="Avg. resolution time" value={hoursToHuman(kpis.avgResolutionHours)} icon={<Timer className="size-5" />} tone="brand" hint={kpis.onTimeRate != null ? `${Math.round(kpis.onTimeRate * 100)}% within target` : undefined} />
         <StatCard label="Citizen rating" value={kpis.avgRating ? `${kpis.avgRating.toFixed(2)} / 5` : "—"} icon={<Star className="size-5" />} tone="amber" hint={`${kpis.feedbackCount} responses`} />
-        <StatCard label="Performance rank" value={mine ? `#${mine.rank} of ${perf.length}` : "—"} icon={<Trophy className="size-5" />} tone="emerald" hint={mine ? `Score ${mine.score}/100` : undefined} />
+        <StatCard label="Performance rank" value={mine?.rank != null ? `#${mine.rank} of ${perf.filter((d) => d.rank != null).length}` : "—"} icon={<Trophy className="size-5" />} tone="emerald" hint={mine?.score != null ? `Score ${mine.score}/100` : "Ranked once reports arrive"} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -104,7 +104,7 @@ export default async function DepartmentDashboard({ searchParams }: { searchPara
         <Card>
           <CardHeader title="Department score" description="Resolution rate, on-time rate and citizen rating" />
           <div className="p-4">
-            <ScoreGauge value={mine?.score ?? 0} label="out of 100" />
+            <ScoreGauge value={mine?.score ?? 0} label={mine?.score != null ? "out of 100" : "no reports yet"} />
             <dl className="mt-2 grid grid-cols-3 gap-2 text-center text-xs">
               <div><dt className="text-muted">Resolved</dt><dd className="text-sm font-semibold">{mine ? Math.round(mine.resolutionRate * 100) : 0}%</dd></div>
               <div><dt className="text-muted">On time</dt><dd className="text-sm font-semibold">{mine ? Math.round(mine.onTimeRate * 100) : 0}%</dd></div>

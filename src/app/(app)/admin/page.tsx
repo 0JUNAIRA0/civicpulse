@@ -9,7 +9,7 @@ import { requirePageUser } from "@/server/auth";
 import { flatParams } from "@/server/page-utils";
 import { byCategory, departmentPerformance, monthlyTrends, overview, recentActivity } from "@/server/services/analytics";
 import { hoursToHuman, timeAgo } from "@/lib/utils";
-import { Card, CardHeader, PageHeader, StatCard } from "@/components/ui";
+import { Card, CardHeader, EmptyState, PageHeader, StatCard } from "@/components/ui";
 import { CategoryDonut, StackedDeptBar, TrendChart } from "@/components/charts/charts";
 import { DateRangeFilter } from "@/components/date-range";
 import { RankingTable } from "@/components/admin/ranking-table";
@@ -61,6 +61,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
         </Card>
         <Card>
           <CardHeader title="Recent activity" />
+          {activity.length === 0 && <EmptyState title="No activity yet" description="Reports, status changes and task updates will appear here." />}
           <ul className="divide-y divide-line">
             {activity.map((a) => (
               <li key={a.id} className="flex items-start justify-between gap-3 px-5 py-2.5 text-sm">

@@ -136,6 +136,7 @@ Grantable permissions: `issues:view_all, issues:verify, issues:close, analytics:
 | GET | `/api/settings` | all | Platform configuration |
 | PUT | `/api/settings` | A (`settings:manage`) | Full settings object (see `settingsSchema`) |
 | GET | `/api/areas` | public | Sample locations |
+| GET | `/api/geocode/reverse` | any signed-in user | `?lat&lng` → `{ address }` from OpenStreetMap Nominatim; cached; 20 lookups/min per user, 1/s globally; 429 when limited, 502 if the geocoder is down |
 | GET/POST | `/api/cron/reminders` | `Authorization: Bearer $CRON_SECRET` or admin | Notifies staff about tasks due within 24 h or overdue (and managers about overdue ones), once per configured interval. `{ reminded }` |
 
 ## Example session (curl)

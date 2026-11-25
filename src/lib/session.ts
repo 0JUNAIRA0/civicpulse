@@ -13,10 +13,15 @@ export type SessionPayload = {
   ver: number;
 };
 
+/**
+ * Signing key for session tokens. AUTH_SECRET is preferred; when it is not set (for example a
+ * fresh Vercel + Neon deployment) the key is derived from DATABASE_URL, which is already a
+ * server-only secret. Rotating either value signs everyone out.
+ */
 function key() {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret || secret.length < 32) {
-    throw new Error("AUTH_SECRET must be set to a string of at least 32 characters");
+  const secret = process.env.AUTH_SECRET || (process.env.DATABASE_URL ? `civicpulse-session:${process.env.DATABASE_URL}` : "");
+  if (secret.length < 32) {
+    throw new Error("Set AUTH_SECRET (at least 32 characters) or DATABASE_URL");
   }
   return new TextEncoder().encode(secret);
 }

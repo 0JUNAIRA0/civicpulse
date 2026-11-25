@@ -71,6 +71,7 @@ npm run dev                     # http://localhost:3000
 | `npm run dev` / `build` / `start` | Develop, build, serve |
 | `npm run db:migrate` | Apply SQL migrations in `drizzle/` |
 | `npm run db:seed` | **Reset** and load demo data (destructive) |
+| `npm run db:bootstrap` | Idempotent production bootstrap: Dhaka areas, departments, platform settings and the four role accounts (never deletes data, never creates sample issues) |
 | `npm run db:generate` | Create a migration after editing `src/db/schema.ts` |
 | `npm run typecheck` / `lint` | Static checks |
 | `npm run test:smoke` | 59 end-to-end API checks of the workflow and permission rules (needs a running, seeded app; `BASE_URL` optional) |
@@ -80,17 +81,26 @@ npm run dev                     # http://localhost:3000
 | Name | Description |
 | --- | --- |
 | `DATABASE_URL` | PostgreSQL connection string. SSL is enabled automatically for common hosts or `sslmode=require`. |
-| `AUTH_SECRET` | 32+ character secret used to sign sessions (`openssl rand -base64 48`). |
-| `CRON_SECRET` | Bearer token for the scheduler calling `/api/cron/reminders`. |
+| `AUTH_SECRET` | Optional. 32+ character secret used to sign sessions (`openssl rand -base64 48`). When it is not set, the signing key is derived from `DATABASE_URL`. |
+| `CRON_SECRET` | Optional. Bearer token for the scheduler calling `/api/cron/reminders`. |
 
-### Deployment (Vercel + managed PostgreSQL)
+### Deployment (Vercel + Neon PostgreSQL)
 
-1. Create a PostgreSQL database (Neon, Supabase, Railway, RDS…).
-2. Run `DATABASE_URL=… npm run db:setup` once from your machine.
-3. Import the repository in Vercel and set `DATABASE_URL`, `AUTH_SECRET`, `CRON_SECRET`.
-4. Optionally schedule `GET /api/cron/reminders` hourly with header `Authorization: Bearer $CRON_SECRET`.
+1. Import the repository in Vercel.
+2. Add a Neon database from the project's **Storage** tab; Vercel injects `DATABASE_URL`.
+3. Deploy. The `vercel-build` script runs the migrations, the idempotent bootstrap (`scripts/bootstrap.ts`) and then `next build`.
 
-## Seed data
+The production database starts with real reference data only: the Dhaka neighbourhoods, the departments, the SLA and platform settings, and the four role accounts listed above. Every issue, task and rating in production comes from real use.
+
+Optionally set `AUTH_SECRET`, and schedule `GET /api/cron/reminders` hourly with header `Authorization: Bearer $CRON_SECRET`.
+
+### Maps and addresses
+
+Maps use OpenStreetMap tiles through Leaflet. When a citizen drops a pin, the address is filled in automatically from OpenStreetMap Nominatim (free, no API key) through `/api/geocode/reverse`, which caches results and rate-limits lookups to respect Nominatim's usage policy.
+
+## Local demo dataset
+
+`npm run db:seed` is for local development and the smoke test only; it wipes the target database and loads the generated dataset below.
 
 | Item | Count |
 | --- | --- |
