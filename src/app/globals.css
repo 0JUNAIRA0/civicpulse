@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand-50: #eef4f9;
+  --color-brand-100: #d6e3ef;
+  --color-brand-200: #adc7de;
+  --color-brand-300: #7fa5c7;
+  --color-brand-400: #4f7fa8;
+  --color-brand-500: #2c5f8a;
+  --color-brand-600: #1b4b73;
+  --color-brand-700: #123b5d;
+  --color-brand-800: #0e2f4a;
+  --color-brand-900: #0a2236;
+  --color-brand-950: #061522;
+
+  --color-accent-50: #e6f8f8;
+  --color-accent-100: #c2eeee;
+  --color-accent-200: #8ee0e0;
+  --color-accent-300: #52cccc;
+  --color-accent-400: #1fb8b8;
+  --color-accent-500: #00a6a6;
+  --color-accent-600: #008a8a;
+  --color-accent-700: #006f6f;
+  --color-accent-800: #005757;
+  --color-accent-900: #003f3f;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+}
+
+:root {
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --line: #e5e7eb;
+  --ink: #0f1f2e;
+  --muted: #5b6b7b;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0b1218;
+  --surface: #111a22;
+  --surface-2: #16212b;
+  --line: #24313d;
+  --ink: #e6eef5;
+  --muted: #93a5b6;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Leaflet tweaks */
+.leaflet-container {
+  font: inherit;
+  background: var(--surface-2);
+  z-index: 0;
+}
+.dark .leaflet-tile-pane {
+  filter: brightness(0.72) invert(1) contrast(0.9) hue-rotate(200deg) saturate(0.35) brightness(0.9);
+}
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--ink);
+}
+.cp-marker {
+  border-radius: 9999px 9999px 9999px 0;
+  transform: rotate(-45deg);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+  display: grid;
+  place-items: center;
+}
+.cp-marker > span {
+  transform: rotate(45deg);
+  color: #fff;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1;
+}
+
+@keyframes cp-slide-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-slide-in {
+  animation: cp-slide-in 0.2s ease-out;
+}
