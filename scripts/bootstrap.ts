@@ -23,7 +23,7 @@ const ACCOUNTS = [
 async function main() {
   const [{ n: areaCount }] = (await db.execute<{ n: number }>(sql`SELECT count(*)::int n FROM areas`)).rows;
   if (areaCount === 0) {
-    await db.insert(s.areas).values(AREAS.map(([name, zone, ward, latitude, longitude]) => ({ name, zone, ward, latitude, longitude })));
+    await db.insert(s.areas).values(AREAS.map(([name, zone, , latitude, longitude]) => ({ name, zone, latitude, longitude })));
     console.log(`areas: added ${AREAS.length}`);
   }
 
