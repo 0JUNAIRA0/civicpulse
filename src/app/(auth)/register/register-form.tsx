@@ -41,10 +41,11 @@ export function RegisterForm({ city }: { city: string }) {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Create an account</h1>
-      <p className="mt-1 text-sm text-muted">Join residents of {city} who help keep the city in shape.</p>
+      <p className="font-mono text-[11px] tracking-[0.14em] text-accent-700 uppercase dark:text-accent-400">Citizen registration</p>
+      <h1 className="mt-2 text-[1.625rem] leading-tight font-semibold text-brand-700 dark:text-white">Create an account</h1>
+      <p className="mt-2 text-sm text-muted">Join residents of {city} who help keep the city in shape.</p>
       <form onSubmit={submit} className="mt-8 space-y-4" noValidate>
-        {formError && <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-200" role="alert">{formError}</div>}
+        {formError && <div className="rounded-md border-l-[3px] border-rose-600 bg-rose-50 px-3.5 py-3 text-sm text-rose-800 dark:bg-rose-950/60 dark:text-rose-200" role="alert">{formError}</div>}
         <Field label="Full name" htmlFor="name" error={errors.name} required>
           <input id="name" autoComplete="name" className={inputClass} value={v.name} onChange={set("name")} aria-invalid={!!errors.name} />
         </Field>
@@ -65,9 +66,9 @@ export function RegisterForm({ city }: { city: string }) {
           <UserPlus className="size-4" /> Create account
         </Button>
       </form>
-      <p className="mt-6 text-center text-sm text-muted">
+      <p className="mt-6 text-sm text-muted">
         Already registered?{" "}
-        <Link href="/login" className="font-medium text-accent-600 hover:underline">
+        <Link href="/login" className="font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400">
           Sign in
         </Link>
       </p>
